@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookStoreService {
@@ -61,7 +62,7 @@ public class BookStoreService {
 
     }
 
-    public Book retrieveObjectGraph(String isbn){
+    public Optional<Book> retrieveObjectGraph(String isbn){
         Book book = null;
 
         try{
@@ -82,6 +83,10 @@ public class BookStoreService {
                 publisher.setCode(rs.getString("CODE"));
                 publisher.setName(rs.getString("PUBLISHER_NAME"));
                 book.setPublisher(publisher);
+            }else {
+                rs.close();
+                stmt.close();
+                return Optional.empty();
             }
 
             rs.close();
@@ -115,6 +120,6 @@ public class BookStoreService {
             }
         }
 
-        return book;
+        return Optional.of(book);
     }
 }

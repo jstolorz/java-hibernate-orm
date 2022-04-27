@@ -2,8 +2,11 @@ package com.bluesoft.javahibernateorm.controllers;
 
 import com.bluesoft.javahibernateorm.domain.Book;
 import com.bluesoft.javahibernateorm.services.BookStoreService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 class JdbcController {
@@ -21,7 +24,15 @@ class JdbcController {
 
     @GetMapping("/books/{isbn}")
     ResponseEntity<Book> getBookByISBN(@PathVariable String isbn){
-        return ResponseEntity.ok(bookStoreService.retrieveObjectGraph(isbn));
+        Optional<Book> bookopt = bookStoreService.retrieveObjectGraph(isbn);
+
+        if(bookopt.isPresent()){
+            return ResponseEntity.ok(bookopt.get());
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+
     }
 
     @PostMapping("/books")
